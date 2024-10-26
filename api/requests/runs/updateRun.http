@@ -1,0 +1,16 @@
+@slug = rtaijs2024
+@id = 01J80F11JTSWDVDBG44NBY19CY
+
+PATCH http://localhost:3000/events/{{slug}}/runs/{{id}}
+Content-Type: application/json
+
+{
+    "game": "ゼルダの伝説 時のオカリナ",
+    "category": "Ganondorf Source Requirement",
+    "console": "WiiVC",
+    "runners": [
+        { "id": "01J75CBJ15ZVDNBG1RA0ESW7JK" }
+    ],
+    "type": "single",
+    "estimate": "01:18:00"
+}

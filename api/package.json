@@ -1,0 +1,33 @@
+{
+  "name": "api",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@discordjs/rest": "^2.4.0",
+    "@hono/node-server": "^1.12.2",
+    "@hono/zod-validator": "^0.2.2",
+    "@marathon-scheduler/models": "file:../models",
+    "@prisma/client": "^5.19.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "discord-api-types": "^0.37.103",
+    "eslint-plugin-neverthrow": "^1.1.4",
+    "got": "^14.4.3",
+    "hono": "^4.5.10",
+    "neverthrow": "^7.1.0",
+    "ulid": "^2.3.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@stylistic/eslint-plugin": "^2.7.2",
+    "@stylistic/eslint-plugin-js": "^2.7.2",
+    "@types/node": "^20.11.17",
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0",
+    "prisma": "^5.19.0",
+    "tsx": "^4.7.1",
+    "typescript-eslint": "^8.3.0"
+  }
+}

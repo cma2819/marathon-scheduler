@@ -1,0 +1,7 @@
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "name": "RTA in Japan Summer 2024",
+    "slug": "rtaijs2024"
+}

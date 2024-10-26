@@ -1,0 +1,15 @@
+@slug = rtaijs2024
+
+POST http://localhost:3000/events/{{slug}}/runs
+Content-Type: application/json
+
+{
+    "game": "ゼルダの伝説 時のオカリナ",
+    "category": "Ganondorf Source Requirement",
+    "console": "WiiVC",
+    "runners": [
+        { "id": "01J75CBJ15ZVDNBG1RA0ESW7JK" }
+    ],
+    "type": "single",
+    "estimate": "01:18:00"
+}

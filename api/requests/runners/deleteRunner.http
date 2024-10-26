@@ -1,0 +1,3 @@
+@runnerId = 01J75CBJ15ZVDNBG1RA0ESW7JK
+
+DELETE http://localhost:3000/events/rtaijs2024/runners/{{runnerId}}

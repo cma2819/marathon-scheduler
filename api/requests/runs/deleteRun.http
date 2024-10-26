@@ -1,0 +1,5 @@
+@slug = rtaijs2024
+@id = 01J80F11JTSWDVDBG44NBY19CY
+
+DELETE http://localhost:3000/events/{{slug}}/runs/{{id}}
+Content-Type: application/json

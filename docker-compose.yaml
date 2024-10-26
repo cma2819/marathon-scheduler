@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: marathon
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - marathon-db:/var/lib/postgresql/data
+    ports:
+      - 15432:5432
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      - APPLICATION_SECRET=QKdeKOwHG6UG30mx4LQ8LLyTgdqSIvBi
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/marathon?schema=public
+      - DISCORD_CLIENT_ID=1298602888867614740
+      - DISCORD_CLIENT_SECRET=WjDyymepzDphSsyLO9RjgxdEY2HD0bZ4
+    volumes:
+      - ./models/dist:/app/models/dist
+      - ./models/node_modules:/app/models/node_modules
+      - ./api/src:/app/api/src
+    ports:
+      - 13000:3000
+volumes:
+  marathon-db:

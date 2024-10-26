@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String       @id
+  name        String
+  discord     String       @unique
+  connections Connection[]
+  runners     Runner[]
+}
+
+model Connection {
+  service  String
+  username String
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+
+  @@unique([service, userId])
+}
+
+model Event {
+  id   String @id
+  slug String @unique
+  name String
+
+  runners Runner[]
+  run     Run[]
+}
+
+enum RunType {
+  Single
+  Race
+  Coop
+  Relay
+}
+
+model Run {
+  id             String           @id
+  game           String
+  category       String
+  type           RunType
+  estimateInSec  Int
+  console        String
+  eventId        String
+  event          Event            @relation(fields: [eventId], references: [id])
+  runParticipant RunParticipant[]
+}
+
+model Runner {
+  id             String           @id
+  userId         String
+  user           User             @relation(fields: [userId], references: [id])
+  eventId        String
+  event          Event            @relation(fields: [eventId], references: [id])
+  availabilities Availability[]
+  runParticipant RunParticipant[]
+
+  @@unique([userId, eventId])
+}
+
+model RunParticipant {
+  runId    String
+  run      Run    @relation(fields: [runId], references: [id])
+  runnerId String
+  runner   Runner @relation(fields: [runnerId], references: [id])
+
+  @@id([runId, runnerId])
+}
+
+model Availability {
+  runnerId String
+  runner   Runner   @relation(fields: [runnerId], references: [id])
+  sort     Int
+  beginAt  DateTime @db.Timestamptz()
+  endAt    DateTime @db.Timestamptz()
+
+  @@id([runnerId, sort])
+}
