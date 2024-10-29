@@ -11,6 +11,7 @@ import { listParticipantRunners } from '../services/runners';
 import { ResultAsync } from 'neverthrow';
 import { presentRunner } from '../presenters/runners';
 import { presentRun } from '../presenters/run';
+import { jwtGuard } from '../../common/infra/middlewares';
 
 const app = new Hono().basePath('/events/:slug/runs');
 
@@ -74,6 +75,7 @@ app.get(
 
 app.post(
   '/',
+  jwtGuard,
   zValidator(
     'json',
     z.object(schemas.run),
@@ -130,6 +132,7 @@ app.post(
 
 app.patch(
   '/:id',
+  jwtGuard,
   zValidator(
     'json',
     z.object(schemas.run),
@@ -187,6 +190,7 @@ app.patch(
 
 app.delete(
   '/:id',
+  jwtGuard,
   async (c) => {
     const slug = c.req.param('slug');
     const runId = c.req.param('id');

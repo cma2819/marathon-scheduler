@@ -1,1 +1,1 @@
-GET http://{{apiHost}}:{{apiPort}}/login/discord
+GET http://{{apiHost}}:{{apiPort}}/login/discord?redirect_url=http%3A%2F%2Flocalhost%3A3000%2F

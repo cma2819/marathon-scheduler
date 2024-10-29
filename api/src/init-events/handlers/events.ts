@@ -12,6 +12,7 @@ import {
   listEvents,
 } from '../services/events';
 import { EventResponse } from '../contracts/responses';
+import { jwtGuard } from '../../common/infra/middlewares';
 
 const app = new Hono().basePath('/events');
 
@@ -53,6 +54,7 @@ app.get(
 
 app.post(
   '/',
+  jwtGuard,
   zValidator(
     'json',
     z.object({
@@ -93,6 +95,7 @@ app.get(
 
 app.patch(
   '/:slug',
+  jwtGuard,
   zValidator(
     'json',
     z.object(schemas.event).omit({
@@ -122,6 +125,7 @@ app.patch(
 
 app.delete(
   '/:slug',
+  jwtGuard,
   async (c) => {
     const slug = c.req.param('slug');
     return deleteEvent(slug).match(() => c.body(null, 204), (err) => {

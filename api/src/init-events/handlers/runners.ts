@@ -12,6 +12,7 @@ import { Availability, PaginationResponse, UtcDateTime } from '@marathon-schedul
 import { ErrorResponse, RunnerResponse } from '@marathon-scheduler/models';
 import { generalZodHook } from '../../common/validators/hooks';
 import { presentRunner } from '../presenters/runners';
+import { jwtGuard } from '../../common/infra/middlewares';
 
 const app = new Hono().basePath('/events/:slug/runners');
 
@@ -54,6 +55,7 @@ app.get('/',
 );
 
 app.post('/',
+  jwtGuard,
   zValidator('json',
     z.object(schemas.runner),
     generalZodHook(),
@@ -93,6 +95,7 @@ app.post('/',
 
 app.patch(
   '/:id',
+  jwtGuard,
   zValidator(
     'json',
     z.object(schemas.runner).omit({
@@ -140,6 +143,7 @@ app.patch(
 
 app.delete(
   '/:id',
+  jwtGuard,
   async (c) => {
     const { slug, id } = c.req.param();
 

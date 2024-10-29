@@ -4,9 +4,14 @@ import { APIGuildMember, APIUser, Routes } from 'discord-api-types/v10';
 import got from 'got';
 import { err, ok, ResultAsync } from 'neverthrow';
 
+type StateData = {
+  value: string;
+  redirect: string;
+};
+
 export type StateStorageProvider = {
-  save: (state: string) => Promise<void>;
-  fetch: () => Promise<string | null>;
+  save: (state: StateData) => Promise<void>;
+  fetch: () => Promise<StateData | null>;
 };
 
 type DiscordCredentials = {
@@ -20,6 +25,7 @@ type DiscordSensitiveCredentials = DiscordCredentials & {
 
 export const makeOAuthUrl = (
   credentials: DiscordCredentials,
+  redirectAfterLogin: string,
   provider: StateStorageProvider,
 ): ResultAsync<string, 'state_storage_error'> => {
   const state = randomBytes(16).toString('base64').substring(0, 16);
@@ -28,14 +34,17 @@ export const makeOAuthUrl = (
     client_id: credentials.clientId,
     redirect_uri: credentials.redirectUrl,
     response_type: 'code',
-    scope: 'identify',
+    scope: ['identify', 'guilds.members.read'].join(' '),
     state,
   });
   const url = new URL('https://discord.com/oauth2/authorize');
   url.search = params.toString();
 
   return ResultAsync.fromPromise(
-    provider.save(state),
+    provider.save({
+      value: state,
+      redirect: redirectAfterLogin,
+    }),
     (e) => {
       console.error(e);
       return 'state_storage_error' as const;
@@ -51,13 +60,17 @@ type Tokens = {
   refreshToken: string;
 };
 
-const exchangeCodeToTokens = async (code: string, redirectUrl: string): Promise<Tokens> => {
-  const response = await got.post('https://discord.com/api/v10/oauth2/tokens', {
+const exchangeCodeToTokens = async (
+  code: string, credentials: DiscordSensitiveCredentials,
+): Promise<Tokens> => {
+  const response = await got.post('https://discord.com/api/v10/oauth2/token', {
     form: {
       grant_type: 'authorization_code',
       code: code,
-      redirect_uri: redirectUrl,
+      redirect_uri: credentials.redirectUrl,
     },
+    username: credentials.clientId,
+    password: credentials.clientSecret,
   }).json<{
     access_token: string;
     expires_in: number;
@@ -77,12 +90,17 @@ type LoginErrors =
   | 'exchange_token_error'
 ;
 
+type LoginTokens = {
+  tokens: Tokens;
+  redirect: string;
+};
+
 export const login = (
   credentials: DiscordSensitiveCredentials,
   requestState: string,
   code: string,
   provider: StateStorageProvider,
-): ResultAsync<Tokens, LoginErrors> => {
+): ResultAsync<LoginTokens, LoginErrors> => {
   return ResultAsync.fromPromise(
     provider.fetch(),
     (e) => {
@@ -91,16 +109,23 @@ export const login = (
     },
   )
     .andThen((state) => {
-      if (requestState !== state) {
+      if (!state || requestState !== state.value) {
+        console.error(state?.value);
         return err('invalid_request_state');
       }
-      return ok(undefined);
+      return ok(state);
     })
-    .andThen(() => {
-      return ResultAsync.fromPromise(exchangeCodeToTokens(code, credentials.redirectUrl),
+    .andThen((state) => {
+      return ResultAsync.fromPromise(exchangeCodeToTokens(code, credentials),
         (e) => {
           console.error(e);
           return 'exchange_token_error' as const;
+        })
+        .map((tokens) => {
+          return {
+            tokens,
+            redirect: state?.redirect,
+          };
         });
     });
 };
@@ -111,15 +136,15 @@ type DiscordProfile = {
   roles: string[];
 };
 
-export const getRoles = (
+export const getProfile = (
   bearer: string,
   guild: string,
 ): ResultAsync<DiscordProfile, 'failed_discord_request'> => {
-  const rest = new REST({ version: '10' }).setToken(bearer);
+  const rest = new REST({ version: '10', authPrefix: 'Bearer' }).setToken(bearer);
 
   const getDiscordUser = async () => {
     const me = await rest.get(Routes.user('@me')) as APIUser;
-    const member = await rest.get(Routes.guildMember(guild, me.id)) as APIGuildMember;
+    const member = await rest.get(Routes.userGuildMember(guild)) as APIGuildMember;
     return [me, member.roles] as const;
   };
 

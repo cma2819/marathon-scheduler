@@ -1,5 +1,6 @@
 POST http://localhost:3000/events
 Content-Type: application/json
+Authorization: Bearer {{bearer}}
 
 {
     "name": "RTA in Japan Summer 2024",
