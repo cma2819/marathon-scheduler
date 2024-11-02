@@ -8,7 +8,7 @@ export const generalZodHook: <
     if (!result.success) {
       return c.json({
         messages: result.error.issues.map(i => i.message),
-      });
+      }, 400);
     }
   };
 };

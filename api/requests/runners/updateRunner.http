@@ -1,19 +1,23 @@
 @runnerId = 01J75CBJ15ZVDNBG1RA0ESW7JK
 
-PATCH http://localhost:3000/events/rtaijs2024/runners/{{runnerId}}
+PATCH http://{{apiHost}}:{{apiPort}}/events/rtaijs2024/runners/{{runnerId}}
 Content-Type: application/json
+Authorization: Bearer {{bearer}}
 
 {
     "name": "Cma",
     "discord": "cma2819",
     "availabilities": [
-    {
-      "start": "2024-09-07T03:00:00.000Z",
-      "end": "2024-09-07T06:00:00.000Z"
-    },
-    {
-      "start": "2024-09-07T11:00:00.000Z",
-      "end": "2024-09-07T13:00:00.000Z"
-    }
-    ]
+      {
+        "start": "2024-09-07T03:00:00.000Z",
+        "end": "2024-09-07T06:00:00.000Z"
+      },
+      {
+        "start": "2024-09-07T11:00:00.000Z",
+        "end": "2024-09-07T13:00:00.000Z"
+      }
+    ],
+    "twitter": "cma2819",
+    "twitch": "cma2819",
+    "youtube": "@cma2819"
 }

@@ -21,12 +21,12 @@ const EventRepository = {
   async list(page?: PaginationRequest<SpeedrunEvent['slug']>): Promise<SpeedrunEvent[]> {
     if (page && 'before' in page) {
       return prisma.event.findMany(
-        { take: 10, skip: 1, cursor: { id: page.before }, orderBy: { id: 'desc' } },
+        { take: 10, skip: 1, cursor: { slug: page.before }, orderBy: { id: 'desc' } },
       );
     }
     if (page && 'after' in page) {
       return prisma.event.findMany(
-        { take: 10, skip: 1, cursor: { id: page.after }, orderBy: { id: 'asc' } },
+        { take: 10, skip: 1, cursor: { slug: page.after }, orderBy: { id: 'asc' } },
       );
     }
     return prisma.event.findMany({ take: 10, orderBy: { id: 'asc' } });

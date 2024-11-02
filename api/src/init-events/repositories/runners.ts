@@ -30,7 +30,6 @@ const Connections = {
 };
 
 export type RunnerQueries = {
-  event?: Runner['eventId'];
   id?: Runner['id'][];
 };
 
@@ -115,50 +114,65 @@ const RunnerRepository = {
   },
 
   async list(
+    event: SpeedrunEvent['id'],
     queries: RunnerQueries = {},
     page?: PaginationRequest<Runner['id']>): Promise<Runner[]> {
-    const selectWhere = {
-      eventId: queries.event,
-      userId: { in: queries.id },
-    };
     const cursor = !page
       ? null
       : 'before' in page
         ? page.before
         : page.after;
 
-    const runners = await prisma.runner.findMany({
+    const users = await prisma.user.findMany({
       cursor: cursor
         ? { id: cursor }
         : undefined,
       skip: cursor ? 1 : 0,
       take: 100,
-      where: selectWhere,
-      include: {
-        user: {
-          include: {
-            connections: true,
+      where: {
+        id: { in: queries.id },
+        runners: {
+          some: {
+            eventId: event,
           },
         },
-        availabilities: true,
+      },
+      include: {
+        runners: {
+          include: {
+            availabilities: true,
+          },
+        },
+        connections: true,
       },
       orderBy: {
-        userId: page && 'after' in page ? 'desc' : 'asc',
+        id: page && 'before' in page ? 'desc' : 'asc',
       },
     });
 
-    return runners.map(runner => Runners.toModels(
-      runner,
-      runner.user,
-      runner.user.connections,
-      runner.availabilities,
-    ));
+    return users.map((user) => {
+      const runner = user.runners.find(r => r.eventId === event)!;
+      return Runners.toModels(
+        runner,
+        user,
+        user.connections,
+        runner.availabilities,
+      );
+    });
   },
 
   async save(runner: Runner): Promise<Runner> {
     const connections = Connections.toRows(runner.connections);
 
     const [saved, user] = await prisma.$transaction(async (tx) => {
+      await tx.connection.deleteMany({
+        where: {
+          user: {
+            discord: runner.connections.discord,
+          },
+        },
+      });
+
       const user = await tx.user.upsert({
         where: {
           discord: runner.connections.discord,
@@ -173,15 +187,8 @@ const RunnerRepository = {
         },
         update: {
           name: runner.name,
-          discord: runner.connections.discord,
           connections: {
-            set: connections.map(conn => ({
-              service_userId: {
-                service: conn.service,
-                userId: runner.id,
-              },
-              username: conn.username,
-            })),
+            create: connections,
           },
         },
         include: {

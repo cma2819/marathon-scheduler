@@ -13,6 +13,7 @@ import { ErrorResponse, RunnerResponse } from '@marathon-scheduler/models';
 import { generalZodHook } from '../../common/validators/hooks';
 import { presentRunner } from '../presenters/runners';
 import { jwtGuard } from '../../common/infra/middlewares';
+import cSchema from '../../common/schemas';
 
 const app = new Hono().basePath('/events/:slug/runners');
 
@@ -37,10 +38,18 @@ const schemas = {
 };
 
 app.get('/',
+  zValidator(
+    'query',
+    cSchema.paginate(z.string()),
+  ),
   async (c) => {
     const slug = c.req.param('slug');
+    const query = c.req.valid('query');
 
-    const runnersResult = await listRunnersOnEvent(slug);
+    const runnersResult = await listRunnersOnEvent(
+      slug,
+      ('before' in query || 'after' in query) ? query : undefined,
+    );
     if (runnersResult.isErr()) {
       return c.json<ErrorResponse>({
         code: runnersResult.error,

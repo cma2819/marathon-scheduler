@@ -65,8 +65,7 @@ export const RunRepository = {
           },
         },
       },
-      cursor: cursors?.cursor,
-      orderBy: cursors?.orderBy,
+      ...cursors,
     });
 
     return rows.map(r => Runs.toModel(r, r.runParticipant.map(p => p.runner.userId)));

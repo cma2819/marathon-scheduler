@@ -12,6 +12,7 @@ type PrismaCursors<UKey extends string, TIdentifier> = {
   orderBy: {
     [k in UKey]: 'asc' | 'desc';
   };
+  skip: 1;
 };
 
 export const makeCursors = <UKey extends string, TIdentifier>(
@@ -24,6 +25,7 @@ export const makeCursors = <UKey extends string, TIdentifier>(
       : 'after' in req ? req.after : undefined,
   },
   orderBy: {
-    [uniqueKey]: 'after' in req ? 'desc' : 'asc',
+    [uniqueKey]: 'before' in req ? 'desc' : 'asc',
   },
+  skip: 1,
 } as PrismaCursors<UKey, TIdentifier>);

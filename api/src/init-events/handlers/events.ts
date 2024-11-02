@@ -70,7 +70,10 @@ app.post(
       slug: event.slug,
     }), (err) => {
       if (err === EventErrors.EventAlreadyExists) {
-        return c.text(`Event with slug ${body.slug} is already exists.`, 409);
+        return c.json<ErrorResponse>({
+          code: err,
+          message: `Event with slug ${body.slug} is already exists.`,
+        }, 409);
       }
       throw err;
     });

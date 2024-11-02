@@ -7,6 +7,7 @@ export const jwtGuard: MiddlewareHandler = (c, next) => {
   const appEnv = env<AppEnv>(c);
 
   const honoJwt = jwt({
+    cookie: 'marathon_scheduler_token',
     secret: appEnv.APPLICATION_SECRET,
   });
 

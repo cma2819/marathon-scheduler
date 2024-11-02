@@ -1,7 +1,8 @@
 @slug = rtaijs2024
 
-POST http://localhost:3000/events/{{slug}}/runs
+POST http://{{apiHost}}:{{apiPort}}/events/{{slug}}/runs
 Content-Type: application/json
+Authorization: Bearer {{bearer}}
 
 {
     "game": "ゼルダの伝説 時のオカリナ",

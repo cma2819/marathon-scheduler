@@ -9,7 +9,8 @@ import { z } from 'zod';
 import { generalZodHook } from '../../common/validators/hooks';
 import { JwtProvider, signIn, validateRedirectUrl } from '../services/authenticate';
 import { sign, verify } from 'hono/jwt';
-import { ResultAsync } from 'neverthrow';
+import { ok } from 'neverthrow';
+import { setAuthorizationCookie } from '../../common/infra/auth';
 
 const app = new Hono();
 
@@ -121,9 +122,7 @@ app.get(
             );
           })
           .andThen((token) => {
-            return ResultAsync.fromSafePromise(
-              setSignedCookie(c, 'token', token, appEnv.APPLICATION_SECRET),
-            );
+            return ok(setAuthorizationCookie(c, token));
           })
           .map(() => {
             return redirect;

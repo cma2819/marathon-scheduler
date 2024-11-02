@@ -1,4 +1,4 @@
-POST http://localhost:3000/events
+POST http://{{apiHost}}:{{apiPort}}/events
 Content-Type: application/json
 Authorization: Bearer {{bearer}}
 

@@ -12,6 +12,7 @@ import { ResultAsync } from 'neverthrow';
 import { presentRunner } from '../presenters/runners';
 import { presentRun } from '../presenters/run';
 import { jwtGuard } from '../../common/infra/middlewares';
+import cSchema from '../../common/schemas';
 
 const app = new Hono().basePath('/events/:slug/runs');
 
@@ -32,10 +33,18 @@ const schemas = {
 
 app.get(
   '/',
+  zValidator(
+    'query',
+    cSchema.paginate(z.string()),
+  ),
   async (c) => {
     const slug = c.req.param('slug');
+    const query = c.req.valid('query');
 
-    const runsResult = await listRunsOnEvent(slug);
+    const runsResult = await listRunsOnEvent(
+      slug,
+      ('before' in query || 'after' in query) ? query : undefined,
+    );
     if (runsResult.isErr()) {
       return c.json<ErrorResponse>({
         code: runsResult.error,

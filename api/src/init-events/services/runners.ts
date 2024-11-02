@@ -1,8 +1,8 @@
-import { Connections, Run, Runner } from '@marathon-scheduler/models';
+import { Connections, PaginationRequest, Run, Runner } from '@marathon-scheduler/models';
 import { err, ok, ResultAsync } from 'neverthrow';
 import EventRepository from '../repositories/events';
 import RunnerRepository from '../repositories/runners';
-import { ulid } from 'ulid';
+import { decodeTime, ulid } from 'ulid';
 import { RunRepository } from '../repositories/runs';
 
 export const RunnerErrors = {
@@ -25,12 +25,15 @@ export const listParticipantRunners = (
       return ok(run);
     })
     .andThen((run) => {
-      return ResultAsync.fromSafePromise(RunnerRepository.list({ id: run.runners }));
+      return ResultAsync.fromSafePromise(
+        RunnerRepository.list(run.eventId, { id: run.runners }),
+      );
     });
 };
 
 export const listRunnersOnEvent = (
   slug: string,
+  page?: PaginationRequest<Runner['id']>,
 ): ResultAsync<Runner[], Extract<RunnerErrors, 'participate_event_not_exists'>> => {
   return ResultAsync.fromSafePromise(EventRepository.find(slug))
     .andThen((event) => {
@@ -40,7 +43,8 @@ export const listRunnersOnEvent = (
       return ok(event);
     })
     .andThen((event) => {
-      return ResultAsync.fromSafePromise(RunnerRepository.list({ event: event.id }));
+      return ResultAsync.fromSafePromise(RunnerRepository.list(event.id, {}, page))
+        .map(runners => runners.toSorted((a, b) => decodeTime(a.id) - decodeTime(b.id)));
     });
 };
 

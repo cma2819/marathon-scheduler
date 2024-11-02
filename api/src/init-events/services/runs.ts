@@ -1,4 +1,4 @@
-import { Run, SpeedrunEvent } from '@marathon-scheduler/models';
+import { PaginationRequest, Run, SpeedrunEvent } from '@marathon-scheduler/models';
 import { err, ok, ResultAsync } from 'neverthrow';
 import EventRepository from '../repositories/events';
 import { RunRepository } from '../repositories/runs';
@@ -14,6 +14,7 @@ type RunErrors = typeof RunErrors[keyof typeof RunErrors];
 
 export const listRunsOnEvent = (
   slug: string,
+  page?: PaginationRequest<Run['id']>,
 ): ResultAsync<Run[], Extract<RunErrors, 'assigned_event_not_found'>> => {
   return ResultAsync.fromSafePromise(EventRepository.find(slug))
     .andThen((event) => {
@@ -24,7 +25,7 @@ export const listRunsOnEvent = (
     })
     .andThen(event => ResultAsync.fromSafePromise(RunRepository.search({
       eventId: event.id,
-    })))
+    }, page)))
     .map(runs => runs.toSorted((a, b) => decodeTime(a.id) - decodeTime(b.id)));
 };
 

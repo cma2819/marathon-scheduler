@@ -13,6 +13,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    develop:
+      watch:
+        - path: ./api/src
+          action: sync
+          target: /app/api/src
+        - path: ./api/node_modules
+          action: sync
+          target: /app/api/node_modules
+        - path: ./models/dist
+          action: sync
+          target: /app/models/dist
+        - path: ./models/node_modules
+          action: sync
+          target: /app/models/node_modules
     depends_on:
       - db
     environment:
@@ -20,6 +34,8 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/marathon?schema=public
       - DISCORD_CLIENT_ID=1298602888867614740
       - DISCORD_CLIENT_SECRET=WjDyymepzDphSsyLO9RjgxdEY2HD0bZ4
+      - ALLOWED_REDIRECT_DOMAIN=localhost
+      - WEBAPP_ORIGIN=http://localhost:3000
     volumes:
       - ./models/dist:/app/models/dist
       - ./models/node_modules:/app/models/node_modules
