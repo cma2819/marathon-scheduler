@@ -1,7 +1,8 @@
 @slug = rtaijs2024
 
-PATCH http://localhost:3000/events/{{slug}}
+PATCH http://{{apiHost}}:{{apiPort}}/events/{{slug}}
 Content-Type: application/json
+Authorization: Bearer {{bearer}} 
 
 {
     "name": "Dev in Japan Summer 2024"

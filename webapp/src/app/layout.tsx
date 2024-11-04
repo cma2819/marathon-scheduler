@@ -10,6 +10,7 @@ import { AppHeader } from "./_components/models/header";
 import { Container, Paper, ThemeProvider } from "@mui/material";
 import { ClientApiProvider } from "./_components/models/api";
 import theme from "./theme";
+import { NotificationProvider } from "./_components/models/notification";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -44,15 +45,17 @@ export default function RootLayout({
             <AppHeader />
             <AppRouterCacheProvider>
               <ThemeProvider theme={theme}>
-                <Paper
-                  square
-                  sx={{
-                    minHeight: "calc(100svh - 64px)",
-                    background: "white",
-                  }}
-                >
-                  {children}
-                </Paper>
+                <NotificationProvider>
+                  <Paper
+                    square
+                    sx={{
+                      minHeight: "calc(100svh - 64px)",
+                      background: "white",
+                    }}
+                  >
+                    {children}
+                  </Paper>
+                </NotificationProvider>
               </ThemeProvider>
             </AppRouterCacheProvider>
           </Container>

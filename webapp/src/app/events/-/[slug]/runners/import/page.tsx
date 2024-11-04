@@ -1,14 +1,13 @@
 import { marathonApi } from "@/lib/api";
-import { EventEditForm } from "./form";
+import { RunnerImportForm } from "./form";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function EventDetailPage({ params }: Props) {
+export default async function RunnerImportPage({ params }: Props) {
   const slug = (await params).slug;
   const api = marathonApi(process.env["API_URL"]);
   const event = await api.getEvent(slug);
-
-  return <EventEditForm event={event} />;
+  return <RunnerImportForm slug={event.slug} />;
 }

@@ -1,38 +1,36 @@
 "use client";
 
-import { Button, TextField } from "@mui/material";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import Grid from "@mui/material/Grid2";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useClientApi } from "@/app/_components/models/api";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import Grid from "@mui/material/Grid2";
+import { Button, TextField } from "@mui/material";
 import { useNotification } from "@/app/_components/models/notification";
 import { revalidateEventCache } from "@/lib/actions";
 
 type FormInput = {
   name: string;
+};
+
+type Event = {
+  name: string;
   slug: string;
 };
 
-export function NewEventForm() {
+export function EventEditForm({ event }: { event: Event }) {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<FormInput>({
     defaultValues: {
-      name: "",
-      slug: "",
+      name: event.name,
     },
     resolver: zodResolver(
       z.object({
-        name: z.string().min(3, "3文字以上で入力してください"),
-        slug: z
-          .string()
-          .min(3, "3文字以上で入力してください")
-          .max(255, "255文字以内で入力してください")
-          .regex(/[a-z,A-Z,0-9,\-,\_]+/, "半角英数字と -, _ のみが使えます"),
+        name: z.string().min(3, "3文字以内で入力してください."),
       })
     ),
   });
@@ -42,13 +40,12 @@ export function NewEventForm() {
   const { setFlashMessage } = useNotification();
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    await api.createEvent({
+    await api.editEvent(event.slug, {
       name: data.name,
-      slug: data.slug,
     });
-    setFlashMessage("イベントを作成しました.");
+    setFlashMessage("イベントを更新しました.");
     await revalidateEventCache();
-    router.push("/events");
+    router.refresh();
   };
 
   return (
@@ -61,19 +58,7 @@ export function NewEventForm() {
         }}
       >
         <Grid size={12}>
-          <Controller
-            name="slug"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Slug"
-                fullWidth
-                error={!!errors.slug}
-                helperText={errors.slug?.message}
-              />
-            )}
-          />
+          <TextField label="Slug" disabled fullWidth value={event.slug} />
         </Grid>
         <Grid size={12}>
           <Controller
@@ -96,7 +81,7 @@ export function NewEventForm() {
             fullWidth
             onClick={handleSubmit(onSubmit)}
           >
-            作成する
+            更新する
           </Button>
         </Grid>
       </Grid>

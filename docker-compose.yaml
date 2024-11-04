@@ -39,7 +39,7 @@ services:
     volumes:
       - ./models/dist:/app/models/dist
       - ./models/node_modules:/app/models/node_modules
-      - ./api/src:/app/api/src
+      # - ./api/src:/app/api/src
     ports:
       - 13000:3000
 volumes:

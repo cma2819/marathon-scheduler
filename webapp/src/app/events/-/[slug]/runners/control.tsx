@@ -10,6 +10,7 @@ export function EventRunnerControl({ slug }: { slug: string }) {
           text: "走者を追加",
           href: `/events/-/${slug}/runners/new`,
           icon: <AddIcon />,
+          disabled: true,
         },
         {
           text: "JSONインポート",

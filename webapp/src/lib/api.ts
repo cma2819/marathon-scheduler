@@ -1,4 +1,5 @@
-import { CreateEventRequest, PaginationRequest, PaginationResponse, RunnerResponse, RunResponse, SpeedrunEvent } from '@marathon-scheduler/models';
+import { CreateEventRequest, PaginationRequest, PaginationResponse, CreateRunnerRequest, RunnerResponse, RunResponse, SpeedrunEvent, UpdateEventRequest, ErrorResponse, CreateRunRequest } from '@marathon-scheduler/models';
+import { Tags } from './tags';
 
 export type MarathonApi = ReturnType<typeof marathonApi>;
 
@@ -7,9 +8,10 @@ export const marathonApi = (url: string = 'http://localhost:13000') => {
     type RequestParams = {
         query?: ConstructorParameters<typeof URLSearchParams>[0],
         body?: Parameters<typeof JSON.stringify>[0],
+        tags?: string[],
     };
 
-    type RequestMethods = 'GET' | 'POST' | 'DELETE'
+    type RequestMethods = 'GET' | 'POST' | 'PATCH' | 'DELETE'
 
     const request = async (method: RequestMethods, path: string, params: RequestParams = {}) => {
         const credentialOptions = {
@@ -25,14 +27,22 @@ export const marathonApi = (url: string = 'http://localhost:13000') => {
         const data = await fetch(requestUrl, {
             method,
             ... params.body ? { body: JSON.stringify(params.body) } : {},
-            ... method !== 'GET' ? credentialOptions : {}
+            ... method !== 'GET' ? credentialOptions : {},
+            next: { tags: params.tags }
         });
+        if (data.status === 204) {
+            return;
+        }
+        if (!data.ok) {
+            const err = await data.json() as ErrorResponse;
+            throw new Error(`[${err.code}] ${err.message}`);
+        }
         return await data.json();
     }
 
     return {
         async listEvents(): Promise<PaginationResponse<SpeedrunEvent>> {
-            return await request('GET', '/events');
+            return await request('GET', '/events', { tags: [Tags.events()] });
         },
 
         async getEvent(slug: string): Promise<SpeedrunEvent> {
@@ -45,11 +55,24 @@ export const marathonApi = (url: string = 'http://localhost:13000') => {
             });
         },
 
+        async editEvent(slug: string, payload: UpdateEventRequest): Promise<SpeedrunEvent> {
+            return await request('PATCH', `/events/${slug}`, {
+                body: payload,
+            });
+        },
+
         async listRunners(slug: string, paginate?: PaginationRequest<RunnerResponse['id']>): Promise<PaginationResponse<RunnerResponse>> {
             return await request('GET', `/events/${slug}/runners`, {
                 query: {
                     ... paginate
-                }
+                },
+                tags: [Tags.runners(slug)]
+            });
+        },
+
+        async createRunner(slug: string, payload: CreateRunnerRequest): Promise<RunnerResponse> {
+            return await request('POST', `/events/${slug}/runners`, {
+                body: payload,
             });
         },
 
@@ -67,7 +90,14 @@ export const marathonApi = (url: string = 'http://localhost:13000') => {
             return await request('GET', `/events/${slug}/runs`, {
                 query: {
                     ... paginate
-                }
+                },
+                tags: [Tags.runs(slug)]
+            });
+        },
+
+        async createRun(slug: string, payload: CreateRunRequest): Promise<RunResponse> {
+            return await request('POST', `/events/${slug}/runs`, {
+                body: payload
             });
         },
 

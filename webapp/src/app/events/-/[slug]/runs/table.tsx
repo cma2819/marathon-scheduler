@@ -41,7 +41,7 @@ export function RunTable({ slug, runs }: Props) {
         ...r,
         runners: r.runners.join(" / "),
       }))}
-      dataKey="game"
+      dataKey="id"
       columns={[
         { field: "game", name: "ゲーム" },
         { field: "category", name: "カテゴリ" },

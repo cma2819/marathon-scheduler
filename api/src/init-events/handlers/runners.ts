@@ -20,7 +20,7 @@ const app = new Hono().basePath('/events/:slug/runners');
 const schemas = {
   runner: {
     name: z.string({ message: 'Runner name is required.' })
-      .min(3, { message: 'Runner name must have length between 3 and 255.' })
+      .min(1, { message: 'Runner name must have length between 1 and 255.' })
       .max(255, { message: 'Runner name must have length between 3 and 255.' }),
     availabilities: z.object({
       unit: z.number().min(1),

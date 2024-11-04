@@ -274,8 +274,9 @@ const RunnerRepository = {
       return;
     }
 
-    prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       await tx.availability.deleteMany({ where: { runnerId: runner.id } });
+      await tx.runParticipant.deleteMany({ where: { runnerId: runner.id } });
       await tx.runner.delete({ where: { id: runner.id } });
     });
   },

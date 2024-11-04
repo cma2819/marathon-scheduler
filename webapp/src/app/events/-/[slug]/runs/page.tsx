@@ -32,7 +32,7 @@ export default async function RunIndexPage({ params }: Props) {
 
   return (
     <Stack direction="column">
-      <EventRunControl />
+      <EventRunControl slug={slug} />
       <RunTable
         slug={slug}
         runs={runs.map((run) => ({

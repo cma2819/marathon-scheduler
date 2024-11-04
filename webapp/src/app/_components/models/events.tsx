@@ -43,7 +43,7 @@ export async function EventList() {
         >
           <List disablePadding>
             {events.data.map((event) => (
-              <ListItem key={event.id} disablePadding>
+              <ListItem key={event.slug} disablePadding>
                 <ListItemButton href={`/events/-/${event.slug}`}>
                   <ListItemText primary={event.name} />
                 </ListItemButton>

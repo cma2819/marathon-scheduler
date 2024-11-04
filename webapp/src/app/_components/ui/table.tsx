@@ -31,7 +31,7 @@ function EditButton<R>({
     onEdit(resource);
   };
   return (
-    <IconButton size="small" onClick={handleEdit}>
+    <IconButton size="small" onClick={handleEdit} disabled>
       <EditIcon />
     </IconButton>
   );

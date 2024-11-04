@@ -1,3 +1,5 @@
+@slug = rtaijs2024
 @runnerId = 01J75CBJ15ZVDNBG1RA0ESW7JK
 
-DELETE http://localhost:3000/events/rtaijs2024/runners/{{runnerId}}
+DELETE http://{{apiHost}}:{{apiPort}}/events/{{slug}}/runners/{{runnerId}}
+Authorization: Bearer {{bearer}}

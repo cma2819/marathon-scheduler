@@ -1,5 +1,6 @@
-POST http://localhost:3000/events/rtaijs2024/runners
+POST http://{{apiHost}}:{{apiPort}}/events/rtaijs2024/runners
 Content-Type: application/json
+Authorization: Bearer {{bearer}}
 
 {
     "name": "Cma",

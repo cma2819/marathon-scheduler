@@ -5,6 +5,7 @@ export type SubMenuItem = {
   text: string;
   icon: React.ReactNode;
   href: string;
+  disabled?: boolean;
 };
 
 export function SubMenu({ items }: { items: SubMenuItem[] }) {
@@ -16,6 +17,7 @@ export function SubMenu({ items }: { items: SubMenuItem[] }) {
           sx={{ px: 2 }}
           startIcon={item.icon}
           href={item.href}
+          disabled={item.disabled}
         >
           {item.text}
         </Button>
