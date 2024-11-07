@@ -1,0 +1,7 @@
+@event=rtaijs2024
+@slug=main
+@row=01JBVNW5YVBMWER1CF6KVWW3J3
+
+DELETE http://{{apiHost}}:{{apiPort}}/events/{{event}}/schedules/{{slug}}/rows/{{row}}
+Content-Type: application/json
+Authorization: Bearer {{bearer}}

@@ -1,0 +1,4 @@
+@slug = rtaijw2024
+@id=01JBWZWMZ4K1TZPR764Q2X242P
+
+GET http://{{apiHost}}:{{apiPort}}/events/{{slug}}/runners/{{id}}

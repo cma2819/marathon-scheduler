@@ -3,6 +3,7 @@ Content-Type: application/json
 Authorization: Bearer {{bearer}}
 
 {
-    "name": "RTA in Japan Summer 2024",
-    "slug": "rtaijs2024"
+    "name": "RTA in Japan Winter 2024",
+    "slug": "rtaijw2024",
+    "begin": "2024-12-25T15:00:00+09:00"
 }

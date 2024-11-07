@@ -89,7 +89,7 @@ export function GenericTable<K extends string, R extends { [k in K]: string }>({
   present: (r: R) => string;
 }) {
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(50);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
 
   const onChangePage = (_: unknown, p: number) => {
     setPage(p);

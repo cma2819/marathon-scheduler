@@ -8,6 +8,7 @@ import {
   GenericTable,
 } from "@/app/_components/ui/table";
 import { useRouter } from "next/navigation";
+import { useNotification } from "@/app/_components/models/notification";
 
 type Run = {
   id: string;
@@ -28,11 +29,23 @@ export function RunTable({ slug, runs }: Props) {
     router.push(`/events/-/${slug}/runs/edit/${resource.id}`);
   };
 
+  const { setFlashMessage } = useNotification();
   const onRunDelete: DeleteActionHandler<Pick<Run, "id">> = async (
     api,
     run
   ) => {
-    await api.deleteRun(slug, run.id);
+    const result = await api.deleteRun(slug, run.id);
+    if (result.success) {
+      setFlashMessage("ゲームを削除しました.");
+      return;
+    }
+    if (result.error.code === "some_schedule_assigned") {
+      setFlashMessage(
+        "いずれかのスケジュールに紐づいているため、削除できませんでした.",
+        "error"
+      );
+      return;
+    }
   };
 
   return (

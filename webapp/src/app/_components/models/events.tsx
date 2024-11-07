@@ -11,9 +11,14 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import Grid from "@mui/material/Grid2";
 import { SimplePanel } from "../ui/panels";
+import { notFound } from "next/navigation";
 
 export async function EventList() {
   const events = await marathonApi(process.env["API_URL"]).listEvents();
+
+  if (!events.success) {
+    notFound();
+  }
 
   return (
     <Grid
@@ -42,7 +47,7 @@ export async function EventList() {
           }
         >
           <List disablePadding>
-            {events.data.map((event) => (
+            {events.data.data.map((event) => (
               <ListItem key={event.slug} disablePadding>
                 <ListItemButton href={`/events/-/${event.slug}`}>
                   <ListItemText primary={event.name} />

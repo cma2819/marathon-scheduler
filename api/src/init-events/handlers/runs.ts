@@ -6,12 +6,12 @@ import {
   Duration, PaginationResponse, RunTypes,
   ErrorResponse, RunResponse,
 } from '@marathon-scheduler/models';
-import { addRunToEvent, deleteRun, listRunsOnEvent, modifyRun } from '../services/runs';
+import { addRunToEvent, deleteRun, getRun, listRunsOnEvent, modifyRun } from '../services/runs';
 import { listParticipantRunners } from '../services/runners';
 import { ResultAsync } from 'neverthrow';
 import { presentRunner } from '../presenters/runners';
 import { presentRun } from '../presenters/run';
-import { jwtGuard } from '../../common/infra/middlewares';
+import { adminGuard, jwtGuard } from '../../common/infra/middlewares';
 import cSchema from '../../common/schemas';
 
 const app = new Hono().basePath('/events/:slug/runs');
@@ -49,7 +49,7 @@ app.get(
       return c.json<ErrorResponse>({
         code: runsResult.error,
         message: 'Event is not found',
-      });
+      }, 404);
     }
 
     const runnersResult = await ResultAsync.combine(
@@ -61,7 +61,7 @@ app.get(
       return c.json<ErrorResponse>({
         code: runnersResult.error,
         message: 'Participant run is not found',
-      });
+      }, 404);
     }
 
     return c.json<PaginationResponse<RunResponse>>({
@@ -82,9 +82,42 @@ app.get(
   },
 );
 
+app.get(
+  '/:id',
+  async (c) => {
+    const { slug, id } = c.req.param();
+    return await getRun(slug, id)
+      .andThen((run) => {
+        return listParticipantRunners(run.id)
+          .map(runners => [run, runners] as const);
+      })
+      .match(
+        ([run, runners]) => {
+          return c.json<RunResponse>(presentRun(slug, run, runners));
+        },
+        (err) => {
+          if (err === 'assigned_event_not_found') {
+            return c.json<ErrorResponse>({
+              code: err,
+              message: 'Assigned event is not found',
+            }, 404);
+          }
+          if (err === 'run_not_found' || err === 'participate_run_not_exists') {
+            return c.json<ErrorResponse>({
+              code: err,
+              message: 'Run is not found',
+            }, 404);
+          }
+          throw err;
+        },
+      );
+  },
+);
+
 app.post(
   '/',
   jwtGuard,
+  adminGuard,
   zValidator(
     'json',
     z.object(schemas.run),
@@ -142,6 +175,7 @@ app.post(
 app.patch(
   '/:id',
   jwtGuard,
+  adminGuard,
   zValidator(
     'json',
     z.object(schemas.run),
@@ -200,6 +234,7 @@ app.patch(
 app.delete(
   '/:id',
   jwtGuard,
+  adminGuard,
   async (c) => {
     const slug = c.req.param('slug');
     const runId = c.req.param('id');
@@ -219,6 +254,12 @@ app.delete(
           code: error,
           message: 'Target run is not found',
         }, 404);
+      }
+      if (error === 'some_schedule_assigned') {
+        return c.json<ErrorResponse>({
+          code: error,
+          message: 'Some schedule is assigned to this run.',
+        }, 400);
       }
 
       throw error;

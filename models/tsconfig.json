@@ -6,6 +6,7 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "module": "CommonJS",
+    "module": "ES6",
+    "moduleResolution": "node"
   }
 }

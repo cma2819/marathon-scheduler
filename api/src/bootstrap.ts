@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import authApp from './auth';
 import initEventsApp from './init-events';
+import manageScheduleApp from './manage-schedules';
 import { logger } from 'hono/logger';
 import { cors } from 'hono/cors';
 import { env } from 'hono/adapter';
@@ -21,4 +22,5 @@ export default (app: Hono): void => {
   // load modules
   app.route('/', authApp);
   app.route('/', initEventsApp);
+  app.route('/', manageScheduleApp);
 };

@@ -1,7 +1,8 @@
+import { BackwardButton } from "@/app/_components/ui/buttons";
 import { SimplePanel } from "@/app/_components/ui/panels";
 import { marathonApi } from "@/lib/api";
 import Grid from "@mui/material/Grid2";
-import { EventDetailMenu } from "./menu";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -10,7 +11,13 @@ type Props = {
 
 export default async function EventDetailLayout({ params, children }: Props) {
   const slug = (await params).slug;
-  const event = await marathonApi(process.env["API_URL"]).getEvent(slug);
+  const result = await marathonApi(process.env["API_URL"]).getEvent(slug);
+
+  if (!result.success) {
+    notFound();
+  }
+
+  const event = result.data;
 
   return (
     <main>
@@ -19,17 +26,17 @@ export default async function EventDetailLayout({ params, children }: Props) {
         spacing={2}
         justifyContent="center"
         sx={{
-          py: 2,
+          p: 2,
         }}
       >
-        <Grid size={10}>
+        <Grid size={12}>
           <SimplePanel title={event.name}>
-            <Grid container spacing={2}>
-              <Grid size="auto">
-                <EventDetailMenu event={event} />
+            <Grid container spacing={0}>
+              <Grid size={12}>
+                <BackwardButton href={`/events/-/${event.slug}`} />
               </Grid>
               <Grid
-                size="grow"
+                size={12}
                 sx={{
                   p: 2,
                 }}

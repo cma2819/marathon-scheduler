@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import {
+  getRunner,
   joinRunnerToEvent,
   leaveRunnerFromEvent,
   listRunnersOnEvent,
@@ -12,7 +13,7 @@ import { Availability, PaginationResponse, UtcDateTime } from '@marathon-schedul
 import { ErrorResponse, RunnerResponse } from '@marathon-scheduler/models';
 import { generalZodHook } from '../../common/validators/hooks';
 import { presentRunner } from '../presenters/runners';
-import { jwtGuard } from '../../common/infra/middlewares';
+import { adminGuard, jwtGuard } from '../../common/infra/middlewares';
 import cSchema from '../../common/schemas';
 
 const app = new Hono().basePath('/events/:slug/runners');
@@ -63,8 +64,31 @@ app.get('/',
   },
 );
 
+app.get(
+  '/:id',
+  async (c) => {
+    const { slug, id } = c.req.param();
+
+    return getRunner(id, slug)
+      .match(
+        runner => c.json<RunnerResponse>(presentRunner(runner)),
+        (e) => {
+          if (e === 'runner_not_found') {
+            return c.json<ErrorResponse>({
+              code: e,
+              message: 'Runner is not found',
+            }, 404);
+          }
+
+          throw e;
+        },
+      );
+  },
+);
+
 app.post('/',
   jwtGuard,
+  adminGuard,
   zValidator('json',
     z.object(schemas.runner),
     generalZodHook(),
@@ -105,6 +129,7 @@ app.post('/',
 app.patch(
   '/:id',
   jwtGuard,
+  adminGuard,
   zValidator(
     'json',
     z.object(schemas.runner).omit({
@@ -153,6 +178,7 @@ app.patch(
 app.delete(
   '/:id',
   jwtGuard,
+  adminGuard,
   async (c) => {
     const { slug, id } = c.req.param();
 

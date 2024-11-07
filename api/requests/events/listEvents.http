@@ -1,1 +1,1 @@
-GET http://{{apiHost}}:{{apiPort}}/events?after=rtaijs2024
+GET http://{{apiHost}}:{{apiPort}}/events

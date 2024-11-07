@@ -5,12 +5,12 @@ Content-Type: application/json
 Authorization: Bearer {{bearer}}
 
 {
-    "game": "ゼルダの伝説 時のオカリナ",
-    "category": "Ganondorf Source Requirement",
-    "console": "WiiVC",
+    "game": "ディディーコングレーシング",
+    "category": "100%",
+    "console": "N64",
     "runners": [
-        { "id": "01J75CBJ15ZVDNBG1RA0ESW7JK" }
+        { "id": "01JBVFGJ5RN99ZXS5PE9W08WH8" }
     ],
     "type": "single",
-    "estimate": "01:18:00"
+    "estimate": "01:00:00"
 }

@@ -4,6 +4,7 @@ import EventRepository from '../repositories/events';
 import { RunRepository } from '../repositories/runs';
 import { decodeTime, ulid } from 'ulid';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { ScheduleRepository } from '../repositories/schedules';
 
 export const RunErrors = {
   EventNotFound: 'assigned_event_not_found',
@@ -27,6 +28,28 @@ export const listRunsOnEvent = (
       eventId: event.id,
     }, page)))
     .map(runs => runs.toSorted((a, b) => decodeTime(a.id) - decodeTime(b.id)));
+};
+
+export const getRun = (
+  slug: string,
+  id: Run['id'],
+): ResultAsync<Run, 'run_not_found' | 'assigned_event_not_found'> => {
+  return ResultAsync.fromSafePromise(EventRepository.find(slug))
+    .andThen((event) => {
+      if (!event) {
+        return err(RunErrors.EventNotFound);
+      }
+      return ok(event);
+    })
+    .andThen(() => {
+      return ResultAsync.fromSafePromise(RunRepository.find(id))
+        .andThen((run) => {
+          if (!run) {
+            return err('run_not_found');
+          }
+          return ok(run);
+        });
+    });
 };
 
 export const addRunToEvent = (
@@ -78,10 +101,13 @@ export const modifyRun = (
     });
 };
 
+type DeleteRunError =
+| 'assigned_event_not_found' | 'run_not_found' | 'some_schedule_assigned';
+
 export const deleteRun = (
   runId: Run['id'],
   slug: SpeedrunEvent['slug'],
-): ResultAsync<true, Extract<RunErrors, 'assigned_event_not_found' | 'run_not_found'>> => {
+): ResultAsync<true, DeleteRunError> => {
   return ResultAsync.fromSafePromise(EventRepository.find(slug))
     .andThen((event) => {
       if (!event) {
@@ -99,6 +125,16 @@ export const deleteRun = (
             return err(RunErrors.RunNotFound);
           }
           return ok(exists);
+        })
+        .andThen((run) => {
+          return ResultAsync.fromSafePromise(
+            ScheduleRepository.existsAssignedRow(run.id),
+          ).andThen((exists) => {
+            if (exists) {
+              return err('some_schedule_assigned');
+            }
+            return ok(run);
+          });
         })
         .map(run => RunRepository.delete(run.id));
     })

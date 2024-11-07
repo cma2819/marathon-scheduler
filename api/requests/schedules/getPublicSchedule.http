@@ -1,0 +1,4 @@
+@event = rtaijw2024
+@slug = main
+
+GET http://localhost:3000/events/{{event}}/schedules/{{slug}}/public

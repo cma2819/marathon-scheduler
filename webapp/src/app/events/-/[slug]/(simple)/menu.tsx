@@ -9,6 +9,7 @@ import {
 import HomeIcon from "@mui/icons-material/Home";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import { SpeedrunEvent } from "@marathon-scheduler/models";
 import React from "react";
 import { usePathname } from "next/navigation";
@@ -54,6 +55,12 @@ export function EventDetailMenu({ event }: Props) {
         href={`/events/-/${event.slug}/runs`}
         icon={<SportsEsportsIcon />}
         text="ゲーム登録"
+        currentPath={pathname}
+      />
+      <MenuItem
+        href={`/events/-/${event.slug}/schedules`}
+        icon={<EditCalendarIcon />}
+        text="スケジュール"
         currentPath={pathname}
       />
     </List>

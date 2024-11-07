@@ -1,0 +1,5 @@
+@event = rtaijw2024
+@slug = main
+
+GET http://{{apiHost}}:{{apiPort}}/events/{{event}}/schedules/{{slug}}/rows
+Authorization: Bearer {{bearer}}

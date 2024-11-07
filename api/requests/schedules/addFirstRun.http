@@ -1,0 +1,13 @@
+@event=rtaijs2024
+@slug=main
+
+POST http://{{apiHost}}:{{apiPort}}/events/{{event}}/schedules/{{slug}}/rows/first
+Content-Type: application/json
+Authorization: Bearer {{bearer}}
+
+{
+    "run": {
+        "id": "01JBVH0VFHCYP7SQQQBSA16YN8"
+    },
+    "setup": "00:05:00"
+}

@@ -48,7 +48,7 @@ export function NewEventForm() {
     });
     setFlashMessage("イベントを作成しました.");
     await revalidateEventCache();
-    router.push("/events");
+    router.push("/");
   };
 
   return (

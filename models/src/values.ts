@@ -61,7 +61,7 @@ export const Duration = {
 
         return {
             seconds: secs,
-            formatted: `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`,
+            formatted: `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`,
         }
     }
 }

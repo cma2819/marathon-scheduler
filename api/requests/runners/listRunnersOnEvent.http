@@ -1,3 +1,3 @@
-@slug = rtaijs2024
+@slug = rtaijw2024
 
 GET http://{{apiHost}}:{{apiPort}}/events/{{slug}}/runners

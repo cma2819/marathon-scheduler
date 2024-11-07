@@ -53,6 +53,14 @@ export const Availability = {
         }));
 
         return this.fromPartials(availabilities);
+    },
+
+    include(self: Pick<Availability, 'start' | 'end'>, target: UtcDateTime): boolean {
+        const start = UtcDateTime.toDate(self.start).getTime();
+        const end = UtcDateTime.toDate(self.end).getTime();
+        const targetTime = UtcDateTime.toDate(target).getTime();
+
+        return start <= targetTime && targetTime <= end;
     }
 }
 

@@ -1,4 +1,4 @@
-type Availability = {
+export type AvailabilityResponse = {
     start: string;
     end: string;
 }
@@ -25,5 +25,5 @@ export type RunnerResponse = {
     twitch?: string;
     twitter?: string;
     youtube?: string;
-    availabilities: Availability[];
+    availabilities: AvailabilityResponse[];
 }

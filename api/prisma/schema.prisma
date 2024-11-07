@@ -31,12 +31,14 @@ model Connection {
 }
 
 model Event {
-  id   String @id
-  slug String @unique
-  name String
+  id      String   @id
+  slug    String   @unique
+  name    String
+  beginAt DateTime @db.Timestamptz()
 
-  runners Runner[]
-  run     Run[]
+  runners  Runner[]
+  run      Run[]
+  Schedule Schedule[]
 }
 
 enum RunType {
@@ -56,6 +58,7 @@ model Run {
   eventId        String
   event          Event            @relation(fields: [eventId], references: [id])
   runParticipant RunParticipant[]
+  ScheduleRow    ScheduleRow[]
 }
 
 model Runner {
@@ -87,4 +90,48 @@ model Availability {
   endAt    DateTime @db.Timestamptz()
 
   @@id([runnerId, sort])
+}
+
+model Schedule {
+  id             String             @id
+  eventId        String
+  event          Event              @relation(fields: [eventId], references: [id])
+  beginAt        DateTime           @db.Timestamptz()
+  slug           String
+  description    String
+  rows           ScheduleRow[]
+  beggining      ScheduleBeginning?
+  PublicSchedule PublicSchedule[]
+
+  @@unique([eventId, slug])
+}
+
+model ScheduleRow {
+  id         String             @id
+  scheduleId String
+  schedule   Schedule           @relation(fields: [scheduleId], references: [id])
+  runId      String             @unique
+  run        Run                @relation(fields: [runId], references: [id])
+  next       String?            @unique
+  nextRow    ScheduleRow?       @relation("NextRow", fields: [next], references: [id])
+  setupInSec Int
+  before     ScheduleRow?       @relation("NextRow")
+  beginning  ScheduleBeginning?
+}
+
+model ScheduleBeginning {
+  scheduleId String      @unique
+  schedule   Schedule    @relation(fields: [scheduleId], references: [id])
+  rowId      String      @unique
+  row        ScheduleRow @relation(fields: [rowId], references: [id])
+}
+
+model PublicSchedule {
+  scheduleId  String
+  schedule    Schedule @relation(fields: [scheduleId], references: [id])
+  data        Json
+  publishedAt DateTime @db.Timestamptz()
+  revision    Int
+
+  @@unique([scheduleId, revision])
 }

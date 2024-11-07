@@ -1,0 +1,14 @@
+@event=rtaijw2024
+@slug=main
+@row=01JBYH4QWNKVZDK1AJ0RPZZ9Z6
+
+PUT http://{{apiHost}}:{{apiPort}}/events/{{event}}/schedules/{{slug}}/rows/{{row}}/next
+Content-Type: application/json
+Authorization: Bearer {{bearer}}
+
+{
+    "run": {
+        "id": "01JBWZYENHG7DWHKHMTKZPQ8VB"
+    },
+    "setup": "00:05:00"
+}

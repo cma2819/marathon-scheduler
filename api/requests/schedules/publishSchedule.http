@@ -1,0 +1,5 @@
+@event = rtaijw2024
+@slug = main
+
+POST http://localhost:3000/events/{{event}}/schedules/{{slug}}/public
+Authorization: Bearer {{bearer}}

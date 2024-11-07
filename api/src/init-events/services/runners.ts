@@ -48,6 +48,19 @@ export const listRunnersOnEvent = (
     });
 };
 
+export const getRunner = (
+  id: Runner['id'],
+  slug: string,
+): ResultAsync<Runner, 'runner_not_found'> => {
+  return ResultAsync.fromSafePromise(RunnerRepository.findById(id, slug))
+    .andThen((runner) => {
+      if (!runner) {
+        return err('runner_not_found');
+      }
+      return ok(runner);
+    });
+};
+
 export const joinRunnerToEvent = (
   runner: Omit<Runner, 'id' | 'eventId'>,
   slug: string,

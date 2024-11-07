@@ -3,6 +3,7 @@ import { err, ok, ResultAsync } from 'neverthrow';
 import EventRepository from '../repositories/events';
 import { decodeTime, ulid } from 'ulid';
 import { RunRepository } from '../repositories/runs';
+import { initDefaultSchedule } from '../../manage-schedules/services/schedules';
 
 export const EventErrors = {
   EventAlreadyExists: 'event_already_exists',
@@ -31,7 +32,10 @@ export const createEvent = (
         id: ulid(),
         name: event.name,
         slug: event.slug,
-      }));
+        beginAt: event.beginAt,
+      })).andThen((event) => {
+        return initDefaultSchedule(event).map(() => event);
+      });
     });
 };
 

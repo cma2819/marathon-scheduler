@@ -1,3 +1,4 @@
 @slug = rtaijs2024
 
-DELETE http://localhost:3000/events/{{slug}}
+DELETE http://{{apiHost}}:{{apiPort}}/events/{{slug}}
+Authorization: Bearer {{bearer}}

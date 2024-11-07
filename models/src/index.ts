@@ -14,4 +14,6 @@ export * from './events';
 export * from './participants';
 export * from './runs';
 export * from './values';
+export * from './schedules';
+
 export * from './contracts';
