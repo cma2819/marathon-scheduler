@@ -12,7 +12,9 @@ jobs:
             - uses: actions/checkout@v4
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v4
-            - run: cd ${GITHUB_WORKSPACE}/marathon-scheduler/models
-            - run: npm ci
-            - run: npm run build
+            - run: |
+                npm ci
+                npm run build
+              working-directory: ${GITHUB_WORKSPACE}/models
             - run: npm run test
+              working-directory: ${GITHUB_WORKSPACE}/models
