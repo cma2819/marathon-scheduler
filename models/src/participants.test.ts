@@ -1,4 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
 import { Availability } from './participants';
 import { UtcDateTime } from './values';
 
