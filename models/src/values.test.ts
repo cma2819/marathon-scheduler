@@ -4,11 +4,11 @@ import { Duration } from './values';
 describe('parsing duration', () => {
     it.each<[string, Duration]>([
         ['10:00', {
-            formatted: '0:10:00',
+            formatted: '00:10:00',
             seconds: 600,
         }],
         ['1:23:45', {
-            formatted: '1:23:45',
+            formatted: '01:23:45',
             seconds: 5025,
         }],
         ['12:00:10', {

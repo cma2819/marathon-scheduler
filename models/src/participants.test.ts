@@ -9,6 +9,7 @@ describe('Make availabilities from time slots', () => {
         expect(availabilities).toEqual([{
             start: UtcDateTime.parse('2024-08-19T00:00:00Z'),
             end: UtcDateTime.parse('2024-08-19T01:00:00Z'),
+            sort: 1,
         }])
     });
     
@@ -28,14 +29,17 @@ describe('Make availabilities from time slots', () => {
             {
                 start: UtcDateTime.parse('2024-08-19T00:00:00Z'),
                 end: UtcDateTime.parse('2024-08-19T03:00:00Z'),
+                sort: 1,
             },
             {
                 start: UtcDateTime.parse('2024-08-19T04:00:00Z'),
                 end: UtcDateTime.parse('2024-08-19T06:00:00Z'),
+                sort: 2,
             },
             {
                 start: UtcDateTime.parse('2024-08-19T10:00:00Z'),
                 end: UtcDateTime.parse('2024-08-19T13:00:00Z'),
+                sort: 3,
             },
         ]);
     })
