@@ -1,7 +1,9 @@
 {
   "name": "api",
   "scripts": {
+    "build": "tsc",
     "dev": "tsx watch src/index.ts",
+    "dev:cli": "tsc -w",
     "lint": "eslint"
   },
   "dependencies": {
@@ -9,6 +11,7 @@
     "@hono/node-server": "^1.12.2",
     "@hono/zod-validator": "^0.2.2",
     "@marathon-scheduler/models": "file:../models",
+    "@oclif/core": "^4.0.31",
     "@prisma/client": "^5.19.0",
     "@typescript-eslint/parser": "^8.3.0",
     "discord-api-types": "^0.37.103",
@@ -16,6 +19,7 @@
     "got": "^14.4.3",
     "hono": "^4.5.10",
     "neverthrow": "^7.1.0",
+    "tough-cookie": "^5.0.0",
     "ulid": "^2.3.0",
     "zod": "^3.23.8"
   },
@@ -27,7 +31,17 @@
     "eslint": "^9.9.1",
     "globals": "^15.9.0",
     "prisma": "^5.19.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.7.1",
     "typescript-eslint": "^8.3.0"
+  },
+  "bin": {
+    "mrun": "./bin/run.js"
+  },
+  "oclif": {
+    "bin": "mrun",
+    "commands": "./dist/commands",
+    "dirname": "mrun",
+    "topicSeparator": " "
   }
 }
