@@ -9,6 +9,18 @@ services:
       - marathon-db:/var/lib/postgresql/data
     ports:
       - 15432:5432
+  cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/marathon?schema=public
+    volumes:
+      - ./models/dist:/app/models/dist
+      - ./models/node_modules:/app/models/node_modules
+      - ./api:/app/api
   api:
     build:
       context: .
@@ -30,10 +42,10 @@ services:
     depends_on:
       - db
     environment:
-      - APPLICATION_SECRET=QKdeKOwHG6UG30mx4LQ8LLyTgdqSIvBi
+      - APPLICATION_SECRET=${APPLICATION_SECRET}
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/marathon?schema=public
-      - DISCORD_CLIENT_ID=1298602888867614740
-      - DISCORD_CLIENT_SECRET=WjDyymepzDphSsyLO9RjgxdEY2HD0bZ4
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
       - ALLOWED_REDIRECT_DOMAIN=localhost
       - WEBAPP_ORIGIN=http://localhost:3000
     volumes:
