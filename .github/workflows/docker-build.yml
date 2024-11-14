@@ -1,9 +1,10 @@
 name: DockerBuild
-on:
-  workflow_run:
-    workflows: [Testing]
-    types: [completed]
-    branches: [develop, main]
+on: [push]
+# on:
+#   workflow_run:
+#     workflows: [Testing]
+#     types: [completed]
+#     branches: [develop, main]
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
