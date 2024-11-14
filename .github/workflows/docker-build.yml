@@ -1,10 +1,9 @@
 name: DockerBuild
-on: [push]
-# on:
-#   workflow_run:
-#     workflows: [Testing]
-#     types: [completed]
-#     branches: [develop, main]
+on:
+  workflow_run:
+    workflows: [Testing]
+    types: [completed]
+    branches: [develop, main]
 
 permissions:
   id-token: write
