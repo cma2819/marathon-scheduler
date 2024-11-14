@@ -11,7 +11,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.ref_name == 'develop' }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' || github.ref_name == 'develop' }}
     steps:
       - 
         name: Checkout repository
