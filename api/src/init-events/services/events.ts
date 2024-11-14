@@ -1,9 +1,10 @@
 import { PaginationRequest, SpeedrunEvent } from '@marathon-scheduler/models';
 import { err, ok, ResultAsync } from 'neverthrow';
 import EventRepository from '../repositories/events';
-import { decodeTime, ulid } from 'ulid';
+import { decodeTime } from 'ulid';
 import { RunRepository } from '../repositories/runs';
 import { initDefaultSchedule } from '../../manage-schedules/services/schedules';
+import { ulid } from '../../common/infra/random';
 
 export const EventErrors = {
   EventAlreadyExists: 'event_already_exists',

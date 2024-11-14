@@ -1,9 +1,11 @@
 {
   "name": "api",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
     "dev:cli": "tsc -w",
+    "start": "tsx src/index.ts",
     "lint": "eslint"
   },
   "dependencies": {

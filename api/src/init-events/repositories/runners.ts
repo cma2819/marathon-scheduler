@@ -1,7 +1,7 @@
 import { PaginationRequest, Runner, SpeedrunEvent, UtcDateTime } from '@marathon-scheduler/models';
 import prisma from '../../common/infra/prisma';
-import { ulid } from 'ulid';
 import { Availability, Connection, Runner as PrismaRunner, User } from '@prisma/client';
+import { ulid } from '../../common/infra/random';
 
 const Connections = {
   toRows: (models: Runner['connections']): Omit<Connection, 'userId'>[] => {

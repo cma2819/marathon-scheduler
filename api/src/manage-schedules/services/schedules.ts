@@ -1,8 +1,8 @@
 import { Duration, Run, Schedule, ScheduleRow, SpeedrunEvent } from '@marathon-scheduler/models';
 import { err, ok, ResultAsync } from 'neverthrow';
 import { ScheduleRepository, ScheduleRowRepository } from '../repositories/schedule';
-import { ulid } from 'ulid';
 import { RunRepository } from '../repositories/run';
+import { ulid } from '../../common/infra/random';
 
 export const initDefaultSchedule = (
   event: SpeedrunEvent,

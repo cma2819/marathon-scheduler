@@ -2,8 +2,9 @@ import { Connections, PaginationRequest, Run, Runner } from '@marathon-scheduler
 import { err, ok, ResultAsync } from 'neverthrow';
 import EventRepository from '../repositories/events';
 import RunnerRepository from '../repositories/runners';
-import { decodeTime, ulid } from 'ulid';
+import { decodeTime } from 'ulid';
 import { RunRepository } from '../repositories/runs';
+import { ulid } from '../../common/infra/random';
 
 export const RunnerErrors = {
   JoinEventNotExists: 'join_event_not_exists',

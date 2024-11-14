@@ -2,9 +2,10 @@ import { PaginationRequest, Run, SpeedrunEvent } from '@marathon-scheduler/model
 import { err, ok, ResultAsync } from 'neverthrow';
 import EventRepository from '../repositories/events';
 import { RunRepository } from '../repositories/runs';
-import { decodeTime, ulid } from 'ulid';
+import { decodeTime } from 'ulid';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ScheduleRepository } from '../repositories/schedules';
+import { ulid } from '../../common/infra/random';
 
 export const RunErrors = {
   EventNotFound: 'assigned_event_not_found',
